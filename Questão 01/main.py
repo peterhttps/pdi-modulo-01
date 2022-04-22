@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-im = Image.open("Woman_eye.png").convert('RGB')
+im = Image.open("../imagens/Woman.png").convert('RGB')
 
 a = np.array(im)
 
@@ -28,4 +28,4 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
 test = transformRGB2YIQ(a)
 test2 = Image.fromarray(transformYIQ2RGB(test).astype(np.uint8))
 
-test2.save("Woman_eye_yiq.png")
+test2.save("../imagens/Woman_yiq.png")
