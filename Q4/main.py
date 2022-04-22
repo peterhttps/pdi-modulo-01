@@ -1,7 +1,9 @@
 import numpy as np
 from PIL import Image
+import os.path
 
-im = Image.open("../imagens/Woman.png").convert('RGB')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+im = Image.open(os.path.join(script_dir, '../imagens/Woman.png')).convert('RGB')
 
 a = np.array(im)
 
@@ -67,5 +69,5 @@ img_resultante = mediana(img_yiq)
 img_resultante_yiq = Image.fromarray(img_resultante.astype(np.uint8))
 img_resultante_rgb = Image.fromarray(transformYIQ2RGB(img_resultante).astype(np.uint8))
 
-img_resultante_yiq.save("../imagens/medianaY_yiq.png")
-img_resultante_rgb.save("../imagens/medianaY_rgb.png")
+img_resultante_yiq.save("./Q4/medianaY_yiq.png")
+img_resultante_rgb.save("./Q4/medianaY_rgb.png")

@@ -1,7 +1,9 @@
 import numpy as np
 from PIL import Image
+import os.path
 
-im = Image.open("../imagens/Woman.png").convert('RGB')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+im = Image.open(os.path.join(script_dir, '../imagens/Woman.png')).convert('RGB')
 
 a = np.array(im)
 
@@ -25,7 +27,7 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
 
     pass
 
-test = transformRGB2YIQ(a)
-test2 = Image.fromarray(transformYIQ2RGB(test).astype(np.uint8))
+imageYIQ = transformRGB2YIQ(a)
+imageRGB = Image.fromarray(transformYIQ2RGB(test).astype(np.uint8))
 
-test2.save("../imagens/Woman_yiq.png")
+imageRGB.save("./Q1/Woman_yiq.png")
