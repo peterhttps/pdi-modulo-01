@@ -19,8 +19,8 @@ def mediana(img):
 
     img_medianaY = np.zeros(img.shape, dtype='uint8') 
 
-    for i in range(i, h-1, m):
-        for j in range(j, w-1, n):
+    for i in range(i, h-1, 1):
+        for j in range(j, w-1, 1):
             medianaY = []
 
             for k in range(k, m+1, 1):
