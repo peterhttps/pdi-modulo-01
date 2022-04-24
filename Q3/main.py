@@ -51,16 +51,12 @@ def mediana(img):
     return img_mediana
 
 def sobel(img):
-    h, w, c = img.shape 
-    m = 3//2
-    n = 3//2
-    i = 0
-    j = 0
-    k = -m
-    l = -n
-    dfi = dfj = soma = 0
-
-    resultado = np.zeros(img.shape, dtype='uint16') 
+    h, w, c = img.shape
+    dfi = dfj = 0
+    i = j = 0
+    k = l = 0
+    x = y = 0
+    m = 3
 
     vertical = np.array([[-1, -2, -1],
                     [0, 0, 0],
@@ -70,43 +66,36 @@ def sobel(img):
                     [-2, 0, 2],
                     [-1, 0, 1]])
 
+    resultado_final = np.zeros(img.shape, dtype='uint16')
+
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
-            #count_x = 0
-            for k in range(k, m+1, 1):
-                #count_y = 0
-                for l in range(l, n+1, 1):
-                    count_x = 0
-                    for count_x in range(count_x, 3, 1):
-                        count_y = 0
-                        for count_y in range(count_y, 3, 1):
-                            if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
-                                dfi += np.add(dfi, 0)
-                                dfj += np.add(dfj, 0)
-                            else:
-                            #print(count_x, count_y)
-                            #print(vertical[count_x, count_y], img[k+i, l+j], vertical[count_x, count_y]*img[k+i, l+j])
-                                dfi = np.add(dfi, np.multiply(vertical[count_x, count_y], img[k+i, l+j]))
-                                dfj = np.add(dfj, np.multiply(horizontal[count_x, count_y], img[k+i, l+j]))
-                    #count_y += 1
-                l = -n
-                #count_x += 1
-            k = -m
-            soma = np.add(abs(dfi), abs(dfj))
-            resultado[i, j] = soma
+           
+            for k in range(k, m, 1):
+                for l in range(l, m, 1):
+                    if (k+i+1 < 0 or k+i+1 > h-1) or (l+j+1 < 0 or l+j+1 > w-1):
+                        pass
+                    else:
+                        dfi = np.add(dfi, np.multiply(img[i+k+1, j+l+1, 0],vertical[k, l]))
+                        dfj = np.add(dfj, np.multiply(img[i+k+1, j+l+1, 0],horizontal[k, l]))
+                        #print(img[i+k+1, j+l+1], vertical[k, l], dfi)
+                l = 0 
+            k = 0
+            soma = np.absolute(dfi) + np.absolute(dfj)
             #print(soma)
-            dfi = np.multiply(dfi, 0)
-            dfj = np.multiply(dfj, 0)
+            resultado_final[i, j] = soma
+            dfi = 0
+            dfj = 0
             soma = 0
-        j = 0
+        j = 0    
 
-    img_resultante_sobel = Image.fromarray(resultado.astype(np.uint8))
+    img_resultante_sobel = Image.fromarray(resultado_final.astype(np.uint8))
 
     img_resultante_sobel.save("sosobel.png")
     
-    resultado_final = histograma(resultado, img.shape)
+    resultado_histograma = histograma(resultado_final, img.shape)
 
-    return resultado_final
+    return resultado_histograma
 
 def histograma(sob, img_shape):
     h, w, c = img_shape
@@ -115,29 +104,24 @@ def histograma(sob, img_shape):
     menor = np.amin(sob)
     resultado = np.zeros(img_shape, dtype='uint8') 
 
-    #print(np.amax(sob))
-    #print(np.amin(sob))
+    #print(maior, menor)
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
             tr = np.round_(np.multiply(np.divide(np.subtract(sob[i, j, 0], menor), maior - menor), 254))
-            #tr = round(((sob[i, j] - menor)/(maior - menor))*(254))
-            #tr_G = np.round_(((sob[i, j, 1] - menor)/(maior - menor))*(maior - 1))
-            #tr_B = np.round_(((sob[i, j, 2] - menor)/(maior - menor))*(maior - 1))
-            #print(sob[i, j], menor, maior, tr)
             resultado[i, j] = tr
         j = 0
     #print(resultado)
 
     return resultado
 
-#img_resultante_mediana = mediana(a)
+img_resultante_mediana = mediana(a)
 img_resultante_sobel = sobel(a)
 
-#img_resultante_rgb = Image.fromarray(img_resultante_mediana.astype(np.uint8))
+img_resultante_rgb = Image.fromarray(img_resultante_mediana.astype(np.uint8))
 img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
-#img_resultante_rgb.save("medianaRGB.png")
+img_resultante_rgb.save("medianaRGB.png")
 img_resultante_rgb2.save("sobel.png")
 
 
