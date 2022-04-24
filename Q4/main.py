@@ -1,29 +1,12 @@
 import numpy as np
 from PIL import Image
+import os.path
+from helper import *
 
-im = Image.open("../imagens/Woman.png").convert('RGB')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+im = Image.open(os.path.join(script_dir, '../imagens/Woman.png')).convert('RGB')
 
 a = np.array(im)
-
-#print(a)
-
-def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-    yiq_from_rgb = np.array([[0.299, 0.587, 0.114],
-                             [0.59590059, -0.27455667, -0.32134392],
-                             [0.21153661, -0.52273617, 0.31119955]])
-    OrigShape=imgRGB.shape
-    return np.dot(imgRGB.reshape(-1,3), yiq_from_rgb.transpose()).reshape(OrigShape)
-
-    pass
-
-def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
-    yiq_from_rgb = np.array([[0.299, 0.587, 0.114],
-                             [0.59590059, -0.27455667, -0.32134392],
-                             [0.21153661, -0.52273617, 0.31119955]])
-    OrigShape=imgYIQ.shape
-    return np.dot(imgYIQ.reshape(-1,3), np.linalg.inv(yiq_from_rgb).transpose()).reshape(OrigShape)
-
-    pass
 
 def mediana(img):
     h, w, c = img.shape 
@@ -67,5 +50,5 @@ img_resultante = mediana(img_yiq)
 img_resultante_yiq = Image.fromarray(img_resultante.astype(np.uint8))
 img_resultante_rgb = Image.fromarray(transformYIQ2RGB(img_resultante).astype(np.uint8))
 
-img_resultante_yiq.save("../imagens/medianaY_yiq.png")
-img_resultante_rgb.save("../imagens/medianaY_rgb.png")
+img_resultante_yiq.save("./Q4/medianaY_yiq.png")
+img_resultante_rgb.save("./Q4/medianaY_rgb.png")
