@@ -3,65 +3,20 @@ from PIL import Image
 import os.path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-im = Image.open(os.path.join(script_dir, '../imagens/woman.png')).convert('RGB')
+im = Image.open(os.path.join(script_dir, '../imagens/maquina.png')).convert('RGB')
 
 a = np.array(im)
-
-def correlacao(img):
-    h, w, c = img.shape
-    R = G = B = 0
-    i = j = 0
-    k = l = 0
-    x = y = 0
-    m = 3
-    n = 1
-
-    mascara = np.array([[1, 1, 1]])
-
-    resultado_final = np.zeros(img.shape, dtype='uint8')
-
-    for i in range(i, h-1, 1):
-        for j in range(j, w-1, 1):
-           
-            for k in range(k, n, 1):
-                for l in range(l, m, 1):
-                    if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
-                        pass
-                    else:
-                        R = np.add(R, np.multiply(img[i+k, j+l, 0],mascara[k, l]))
-                        G = np.add(G, np.multiply(img[i+k, j+l, 1],mascara[k, l]))
-                        B = np.add(B, np.multiply(img[i+k, j+l, 2],mascara[k, l]))
-                        #print(img[i+k+1, j+l+1], vertical[k, l], dfi)
-                l = 0 
-            k = 0
-            #soma = np.absolute(dfi) + np.absolute(dfj)
-            #print(soma)
-            resultado_final[i, j] = [R, G, B]
-            R = 0
-            G = 0
-            B = 0
-            #soma = 0
-        j = 0    
-
-    img_resultante = Image.fromarray(resultado_final.astype(np.uint8))
-
-    img_resultante.save("cor.png")
-
-    return
-    
-    #resultado_histograma = histograma(resultado_final, img.shape)
-
-    #return img_resultante_sobel
 
 def media(img):
     h, w, c = img.shape 
     offset = 25
-    row = 51
-    col = 77
+    pivo = [0, 0]
+    row = 10
+    col = 13
     m = col//2
     n = row//2
-    i = 0
-    j = 0
+    i = pivo[0]
+    j = pivo[1]
     k = -m
     l = -n
 
@@ -91,17 +46,20 @@ def media(img):
 
             #print(i, j)
             img_media[i, j] = [r + offset, g + offset, b + offset]
-        j = 0
+        j = pivo[1]
+
     return img_media
 
 def sobel(img):
     h, w, c = img.shape
     dfiR = dfiG = dfiB = dfjR = dfjG = dfjB = 0
-    i = j = 0
+    offset = 25
+    pivo = [0, 0]
+    i = pivo[0]
+    j = pivo[1]
     k = l = 0
     x = y = 0
     m = 3
-    offset = 10
 
     vertical = np.array([[-1, -2, -1],
                     [0, 0, 0],
@@ -127,13 +85,11 @@ def sobel(img):
                         dfjR = np.add(dfjR, np.multiply(img[i+k, j+l, 0],horizontal[k, l]))
                         dfjG = np.add(dfjG, np.multiply(img[i+k, j+l, 1],horizontal[k, l]))
                         dfjB = np.add(dfjB, np.multiply(img[i+k, j+l, 2],horizontal[k, l]))
-                        #print(img[i+k+1, j+l+1], vertical[k, l], dfi)
                 l = 0 
             k = 0
             somaR = np.absolute(dfiR) + np.absolute(dfjR)
             somaG = np.absolute(dfiG) + np.absolute(dfjG)
             somaB = np.absolute(dfiB) + np.absolute(dfjB)
-            #print(soma)
             resultado_final[i, j] = [somaR + offset, somaG + offset, somaB + offset]
             dfiR = 0
             dfiG = 0
@@ -144,7 +100,7 @@ def sobel(img):
             somaR = 0
             somaG = 0
             somaB = 0
-        j = 0    
+        j = pivo[1] 
 
     img_resultante_sobel = Image.fromarray(resultado_final.astype(np.uint8))
 
@@ -173,14 +129,14 @@ def histograma(sob, img_shape):
     return resultado
 
 img_resultante_media = media(a)
-#img_resultante_sobel = sobel(a)
+img_resultante_sobel = sobel(a)
 #correlacao(a)
 
 img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
-#img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
+img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
 img_resultante_rgb.save("mediaRGB.png")
-#img_resultante_rgb2.save("sobel.png")
+img_resultante_rgb2.save("sobel.png")
 
 
 
