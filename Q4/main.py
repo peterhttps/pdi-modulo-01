@@ -39,7 +39,7 @@ def mediana(img):
             q = img[i, j, 2]
 
             #print(i, j)
-            img_medianaY[i, j] = y
+            img_medianaY[i, j] = [y, I, q]
         j = 0
     return img_medianaY
 
@@ -50,5 +50,5 @@ img_resultante = mediana(img_yiq)
 img_resultante_yiq = Image.fromarray(img_resultante.astype(np.uint8))
 img_resultante_rgb = Image.fromarray(transformYIQ2RGB(img_resultante).astype(np.uint8))
 
-img_resultante_yiq.save("./Q4/medianaY_yiq.png")
-img_resultante_rgb.save("./Q4/medianaY_rgb.png")
+img_resultante_yiq.save("medianaY_yiq.png")
+img_resultante_rgb.save("medianaY_rgb.png")

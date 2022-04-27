@@ -7,53 +7,56 @@ im = Image.open(os.path.join(script_dir, '../imagens/maquina.png')).convert('RGB
 
 a = np.array(im)
 
-def mediana(img):
+def media(img):
     h, w, c = img.shape 
-    m = 3//2
-    n = 9//2
-    i = 0
-    j = 0
+    offset = 25
+    pivo = [0, 0]
+    row = 10
+    col = 13
+    m = col//2
+    n = row//2
+    i = pivo[0]
+    j = pivo[1]
     k = -m
     l = -n
 
-    img_mediana = np.zeros(img.shape, dtype='uint8') 
+    img_media = np.zeros(img.shape, dtype='uint8') 
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
-            medianaR = []
-            medianaG = []
-            medianaB = []
+            mediaR = 0
+            mediaG = 0
+            mediaB = 0
 
-            for k in range(k, m+1, 1):
-                for l in range(l, n+1, 1):
+            for k in range(k, m, 1):
+                for l in range(l, n, 1):
                     if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
-                        medianaR.append(0)
-                        medianaG.append(0)
-                        medianaB.append(0)
+                        pass
                     else:
-                        medianaR.append(img[i+k, j+l, 0])
-                        medianaG.append(img[i+k, j+l, 1])
-                        medianaB.append(img[i+k, j+l, 2])
+                        #print(k, j)
+                        mediaR += img[i+k, j+l, 0]
+                        mediaG += img[i+k, j+l, 1]
+                        mediaB += img[i+k, j+l, 2]
                 l = -n
             k = -m
 
-            medianaR = np.sort(medianaR)
-            medianaG = np.sort(medianaG)
-            medianaB = np.sort(medianaB)
-
-            r = np.median(medianaR)
-            g = np.median(medianaG)
-            b = np.median(medianaB)
+            r = round(mediaR/(row*col))
+            g = round(mediaG/(row*col))
+            b = round(mediaB/(row*col))
 
             #print(i, j)
-            img_mediana[i, j] = [r, g, b]
-        j = 0
-    return img_mediana
+            img_media[i, j] = [r + offset, g + offset, b + offset]
+        j = pivo[1]
+
+    return img_media
 
 def sobel(img):
     h, w, c = img.shape
-    dfi = dfj = 0
-    i = j = 0
+    dfiR = dfiG = dfiB = dfjR = dfjG = dfjB = 0
+    offset = 25
+    pivo = [0, 0]
+    i = pivo[0]
+    j = pivo[1]
     k = l = 0
     x = y = 0
     m = 3
@@ -73,21 +76,31 @@ def sobel(img):
            
             for k in range(k, m, 1):
                 for l in range(l, m, 1):
-                    if (k+i+1 < 0 or k+i+1 > h-1) or (l+j+1 < 0 or l+j+1 > w-1):
+                    if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
                         pass
                     else:
-                        dfi = np.add(dfi, np.multiply(img[i+k+1, j+l+1, 0],vertical[k, l]))
-                        dfj = np.add(dfj, np.multiply(img[i+k+1, j+l+1, 0],horizontal[k, l]))
-                        #print(img[i+k+1, j+l+1], vertical[k, l], dfi)
+                        dfiR = np.add(dfiR, np.multiply(img[i+k, j+l, 0],vertical[k, l]))
+                        dfiG = np.add(dfiG, np.multiply(img[i+k, j+l, 1],vertical[k, l]))
+                        dfiB = np.add(dfiB, np.multiply(img[i+k, j+l, 2],vertical[k, l]))
+                        dfjR = np.add(dfjR, np.multiply(img[i+k, j+l, 0],horizontal[k, l]))
+                        dfjG = np.add(dfjG, np.multiply(img[i+k, j+l, 1],horizontal[k, l]))
+                        dfjB = np.add(dfjB, np.multiply(img[i+k, j+l, 2],horizontal[k, l]))
                 l = 0 
             k = 0
-            soma = np.absolute(dfi) + np.absolute(dfj)
-            #print(soma)
-            resultado_final[i, j] = soma
-            dfi = 0
-            dfj = 0
-            soma = 0
-        j = 0    
+            somaR = np.absolute(dfiR) + np.absolute(dfjR)
+            somaG = np.absolute(dfiG) + np.absolute(dfjG)
+            somaB = np.absolute(dfiB) + np.absolute(dfjB)
+            resultado_final[i, j] = [somaR + offset, somaG + offset, somaB + offset]
+            dfiR = 0
+            dfiG = 0
+            dfiB = 0
+            dfjR = 0
+            dfjG = 0
+            dfjB = 0
+            somaR = 0
+            somaG = 0
+            somaB = 0
+        j = pivo[1] 
 
     img_resultante_sobel = Image.fromarray(resultado_final.astype(np.uint8))
 
@@ -115,13 +128,14 @@ def histograma(sob, img_shape):
 
     return resultado
 
-img_resultante_mediana = mediana(a)
+img_resultante_media = media(a)
 img_resultante_sobel = sobel(a)
+#correlacao(a)
 
-img_resultante_rgb = Image.fromarray(img_resultante_mediana.astype(np.uint8))
+img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
 img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
-img_resultante_rgb.save("medianaRGB.png")
+img_resultante_rgb.save("mediaRGB.png")
 img_resultante_rgb2.save("sobel.png")
 
 
