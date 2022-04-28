@@ -10,5 +10,7 @@ a = np.array(im)
 
 imageYIQ = transformRGB2YIQ(a)
 imageRGB = Image.fromarray(transformYIQ2RGB(imageYIQ).astype(np.uint8))
+imageYIQ = Image.fromarray(imageYIQ.astype(np.uint8))
 
-imageRGB.save("./Q1/Woman_yiq_back_to_rgb.png")
+imageYIQ.save("Woman_yiq.png")
+imageRGB.save("Woman_yiq_back_to_rgb.png")
