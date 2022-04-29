@@ -1,8 +1,6 @@
 import numpy as np
-from PIL import Image, ImageDraw
 import os
 import cv2 as cv
-import numpy as np
 from matplotlib import pyplot as plt
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
