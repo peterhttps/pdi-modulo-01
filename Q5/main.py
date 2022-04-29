@@ -1,33 +1,51 @@
 import numpy as np
 from PIL import Image, ImageDraw
 import os
+import cv2 as cv
+import numpy as np
+from matplotlib import pyplot as plt
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-im_woman = Image.open(os.path.join(script_dir, '../imagens/Woman.png')).convert('RGB')
-im_woman_eye   = Image.open(os.path.join(script_dir, '../imagens/Woman_eye.png')).convert('RGB')
+img_woman = cv.imread(os.path.join(script_dir, '../imagens/Woman.png'),0)
+template = cv.imread(os.path.join(script_dir, '../imagens/Woman_eye.png'),0)
 
-arr_woman = np.asarray(im_woman)
-arr_woman_eye = np.asarray(im_woman_eye)
+w, h = template.shape[::-1]
 
-y_woman, x_woman = arr_woman.shape[:2]
-y_woman_eye, x_woman_eye = arr_woman_eye.shape[:2]
+img_copy = img_woman.copy()
+method = eval('cv.TM_CCORR_NORMED')
 
-xstop = x_woman - x_woman_eye + 1
-ystop = y_woman - y_woman_eye + 1
+result = cv.matchTemplate(img_copy,template,method)
+min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
 
-matches = []
-for x_min in range(0, xstop):
-    for y_min in range(0, ystop):
-        x_max = x_min + x_woman_eye
-        y_max = y_min + y_woman_eye
+if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+    top_left = min_loc
+else:
+    top_left = max_loc
 
-        arr_s = arr_woman[y_min:y_max, x_min:x_max]   
-        arr_t = (arr_s == arr_woman_eye)                
-        if arr_t.all():                         
-            matches.append((x_min,y_min))
+bottom_right = (top_left[0] + w, top_left[1] + h)
+cv.rectangle(img_copy,top_left, bottom_right, 255, 2)
+plt.subplot(121),plt.imshow(result,cmap = 'gray')
+plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
+plt.subplot(122),plt.imshow(img_copy,cmap = 'gray')
+plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+plt.show()
 
+cv.rectangle(img_copy,top_left, bottom_right, 255, -1)
 
-img_drawing = ImageDraw.Draw(im_woman)
-img_drawing.rectangle((matches[0], (np.asarray(im_woman_eye).shape[1] + 247, np.asarray(im_woman_eye).shape[0] + 184)), outline="red", width=2)
-im_woman.show()
+method = eval('cv.TM_CCORR_NORMED')
 
+result = cv.matchTemplate(img_copy,template,method)
+min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+
+if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+    top_left = min_loc
+else:
+    top_left = max_loc
+
+bottom_right = (top_left[0] + w, top_left[1] + h)
+cv.rectangle(img_copy,top_left, bottom_right, 255, 2)
+plt.subplot(121),plt.imshow(result,cmap = 'gray')
+plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
+plt.subplot(122),plt.imshow(img_copy,cmap = 'gray')
+plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+plt.show()  
