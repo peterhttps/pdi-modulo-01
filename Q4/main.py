@@ -10,12 +10,12 @@ a = np.array(im)
 
 def mediana(img):
     h, w, c = img.shape 
-    m = 3//2
+    m = 3//2 
     n = 5//2
     i = 0
     j = 0
     k = -m
-    l = -n
+    l = -n 
 
     img_medianaY = np.zeros(img.shape, dtype='uint8') 
 
@@ -23,8 +23,8 @@ def mediana(img):
         for j in range(j, w-1, 1):
             medianaY = []
 
-            for k in range(k, m+1, 1):
-                for l in range(l, n+1, 1):
+            for k in range(k, m, 1):
+                for l in range(l, n, 1):
                     if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
                         medianaY.append(0)
                     else:

@@ -11,8 +11,8 @@ def media(img):
     h, w, c = img.shape 
     offset = 25
     pivo = [0, 0]
-    row = 13
-    col = 17
+    row = 5
+    col = 3
     m = col//2
     n = row//2
     i = pivo[0]
@@ -134,7 +134,7 @@ img_resultante_media = media(a)
 img_resultante_sobel = sobel(a)
 
 img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
-mg_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
+img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
 img_resultante_rgb.save("media.png")
 img_resultante_rgb2.save("sobel.png")
