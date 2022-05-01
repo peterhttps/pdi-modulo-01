@@ -10,7 +10,7 @@ template = cv.imread(os.path.join(script_dir, '../imagens/Woman_eye.png'),0)
 w, h = template.shape[::-1]
 
 img_copy = img_woman.copy()
-method = eval('cv.TM_CCORR_NORMED')
+method = cv.TM_CCORR_NORMED
 
 result = cv.matchTemplate(img_copy,template,method)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -27,7 +27,7 @@ plt.show()
 
 cv.rectangle(img_copy,top_left, bottom_right, 255, -1)
 
-method = eval('cv.TM_CCORR_NORMED')
+method = cv.TM_CCORR_NORMED
 
 result = cv.matchTemplate(img_copy,template,method)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
