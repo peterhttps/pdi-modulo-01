@@ -15,10 +15,7 @@ method = eval('cv.TM_CCORR_NORMED')
 result = cv.matchTemplate(img_copy,template,method)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
 
-if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
-    top_left = min_loc
-else:
-    top_left = max_loc
+top_left = max_loc
 
 bottom_right = (top_left[0] + w, top_left[1] + h)
 cv.rectangle(img_copy,top_left, bottom_right, 255, 2)
@@ -35,10 +32,7 @@ method = eval('cv.TM_CCORR_NORMED')
 result = cv.matchTemplate(img_copy,template,method)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
 
-if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
-    top_left = min_loc
-else:
-    top_left = max_loc
+top_left = max_loc
 
 bottom_right = (top_left[0] + w, top_left[1] + h)
 cv.rectangle(img_copy,top_left, bottom_right, 255, 2)
