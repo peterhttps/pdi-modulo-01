@@ -30,15 +30,16 @@ def media(img):
             mediaG = 0
             mediaB = 0
 
-            for k in range(k, m, 1):
-                for l in range(l, n, 1):
+            for k in range(k, m+1, 1):
+                for l in range(l, n+1, 1):
                     if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
+                        #soma 0
                         pass
                     else:
                         #print(k, j)
-                        mediaR += img[i+k, j+l, 0]*mascara_media[k, l]
-                        mediaG += img[i+k, j+l, 1]*mascara_media[k, l]
-                        mediaB += img[i+k, j+l, 2]*mascara_media[k, l]
+                        mediaR += img[i+k, j+l, 0]*mascara_media[k+m, l+n]
+                        mediaG += img[i+k, j+l, 1]*mascara_media[k+m, l+n]
+                        mediaB += img[i+k, j+l, 2]*mascara_media[k+m, l+n]
                 l = -n
             k = -m
 
@@ -55,13 +56,13 @@ def media(img):
 def sobel(img):
     h, w, c = img.shape
     dfiR = dfiG = dfiB = dfjR = dfjG = dfjB = 0
-    offset = 25
+    offset = 0
     pivo = [0, 0]
     i = pivo[0]
     j = pivo[1]
-    k = l = 0
+    m = 3//2
+    k = l = -m
     x = y = 0
-    m = 3
 
     vertical = np.array([[-1, -2, -1],
                     [0, 0, 0],
@@ -71,28 +72,33 @@ def sobel(img):
                     [-2, 0, 2],
                     [-1, 0, 1]])
 
+    resultado_final_horizontal = np.zeros(img.shape, dtype='uint16')
+    resultado_final_vertical = np.zeros(img.shape, dtype='uint16')
     resultado_final = np.zeros(img.shape, dtype='uint16')
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
            
-            for k in range(k, m, 1):
-                for l in range(l, m, 1):
+            for k in range(k, m+1, 1):
+                for l in range(l, m+1, 1):
                     if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
+                        #soma 0
                         pass
                     else:
-                        dfiR = np.add(dfiR, np.multiply(img[i+k, j+l, 0],vertical[k, l]))
-                        dfiG = np.add(dfiG, np.multiply(img[i+k, j+l, 1],vertical[k, l]))
-                        dfiB = np.add(dfiB, np.multiply(img[i+k, j+l, 2],vertical[k, l]))
-                        dfjR = np.add(dfjR, np.multiply(img[i+k, j+l, 0],horizontal[k, l]))
-                        dfjG = np.add(dfjG, np.multiply(img[i+k, j+l, 1],horizontal[k, l]))
-                        dfjB = np.add(dfjB, np.multiply(img[i+k, j+l, 2],horizontal[k, l]))
-                l = 0 
-            k = 0
+                        dfiR = np.add(dfiR, np.multiply(img[i+k, j+l, 0],vertical[k+m, l+m]))
+                        dfiG = np.add(dfiG, np.multiply(img[i+k, j+l, 1],vertical[k+m, l+m]))
+                        dfiB = np.add(dfiB, np.multiply(img[i+k, j+l, 2],vertical[k+m, l+m]))
+                        dfjR = np.add(dfjR, np.multiply(img[i+k, j+l, 0],horizontal[k+m, l+m]))
+                        dfjG = np.add(dfjG, np.multiply(img[i+k, j+l, 1],horizontal[k+m, l+m]))
+                        dfjB = np.add(dfjB, np.multiply(img[i+k, j+l, 2],horizontal[k+m, l+m]))
+                l = -m
+            k = -m
+            resultado_final_horizontal[i, j] = [np.absolute(dfiR), np.absolute(dfiG), np.absolute(dfiB)]
+            resultado_final_vertical[i, j] = [np.absolute(dfjR), np.absolute(dfjG), np.absolute(dfjB)]
             somaR = np.absolute(dfiR) + np.absolute(dfjR)
             somaG = np.absolute(dfiG) + np.absolute(dfjG)
             somaB = np.absolute(dfiB) + np.absolute(dfjB)
-            resultado_final[i, j] = [somaR + offset, somaG + offset, somaB + offset]
+            resultado_final[i, j] = [somaR, somaG, somaB]
             dfiR = 0
             dfiG = 0
             dfiB = 0
@@ -108,35 +114,53 @@ def sobel(img):
 
     img_resultante_sobel.save("sosobel.png")
     
-    resultado_histograma = histograma(resultado_final, img.shape)
+    resultado_histograma_vertical = histograma(resultado_final_vertical, img.shape, offset)
+    resultado_histograma_horizontal = histograma(resultado_final_horizontal, img.shape, offset)
+    resultado_histograma = histograma(resultado_final, img.shape, offset)
+
+    img_resultante_vertical = Image.fromarray(resultado_final_vertical.astype(np.uint8))
+    img_resultante_horizontal = Image.fromarray(resultado_final_horizontal.astype(np.uint8))
+
+    img_resultante_vertical.save("sobel_vertical.png")
+    img_resultante_horizontal.save("sobel_horizontal.png")
 
     return resultado_histograma
 
-def histograma(sob, img_shape):
+def histograma(sob, img_shape, offset):
+    sobR, sobG, sobB = np.split(sob, 3, axis=2)
     h, w, c = img_shape
     i = j = 0
-    maior = np.amax(sob)
-    menor = np.amin(sob)
-    resultado = np.zeros(img_shape, dtype='uint8') 
+    maiorR = np.amax(sobR)
+    maiorG = np.amax(sobG)
+    maiorB = np.amax(sobB)
+    menorR = np.amin(sobR)
+    menorG = np.amin(sobG)
+    menorB = np.amin(sobB)
+    #maior = np.amax(sob)
+    #menor = np.amin(sob)
 
-    #print(maior, menor)
+    resultado = np.zeros([h, w, c], dtype='uint8') 
+
+    #print(maiorR, maiorG, maiorB, menorR, menorG, menorB)
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
-            tr = np.round_(np.multiply(np.divide(np.subtract(sob[i, j, 0], menor), maior - menor), 254))
-            resultado[i, j] = tr
+            trR = np.round_(np.multiply(np.divide(sob[i, j, 0] - menorR, maiorR - menorR), 254))
+            trG = np.round_(np.multiply(np.divide(sob[i, j, 1] - menorG, maiorG - menorG), 254))
+            trB = np.round_(np.multiply(np.divide(sob[i, j, 2] - menorB, maiorB - menorB), 254))
+            resultado[i, j] = [trR + offset, trG + offset, trB + offset]
         j = 0
     #print(resultado)
 
     return resultado
 
-img_resultante_media = media(a)
+#img_resultante_media = media(a)
 img_resultante_sobel = sobel(a)
 
-img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
+#img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
 img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
-img_resultante_rgb.save("media.png")
+#img_resultante_rgb.save("media.png")
 img_resultante_rgb2.save("sobel.png")
 
 
