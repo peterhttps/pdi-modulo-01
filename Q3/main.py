@@ -3,7 +3,7 @@ from PIL import Image
 import os.path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-im = Image.open(os.path.join(script_dir, '../imagens/maquina.png')).convert('RGB')
+im = Image.open(os.path.join(script_dir, '../imagens/woman.png')).convert('RGB')
 
 a = np.array(im)
 
@@ -11,8 +11,8 @@ def media(img):
     h, w, c = img.shape 
     offset = 25
     pivo = [0, 0]
-    row = 10
-    col = 13
+    row = 13
+    col = 17
     m = col//2
     n = row//2
     i = pivo[0]
@@ -21,6 +21,8 @@ def media(img):
     l = -n
 
     img_media = np.zeros(img.shape, dtype='uint8') 
+
+    mascara_media = np.full([row, col, 1], 1/(row*col), dtype='float')
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
@@ -34,15 +36,15 @@ def media(img):
                         pass
                     else:
                         #print(k, j)
-                        mediaR += img[i+k, j+l, 0]
-                        mediaG += img[i+k, j+l, 1]
-                        mediaB += img[i+k, j+l, 2]
+                        mediaR += img[i+k, j+l, 0]*mascara_media[k, l]
+                        mediaG += img[i+k, j+l, 1]*mascara_media[k, l]
+                        mediaB += img[i+k, j+l, 2]*mascara_media[k, l]
                 l = -n
             k = -m
 
-            r = round(mediaR/(row*col))
-            g = round(mediaG/(row*col))
-            b = round(mediaB/(row*col))
+            r = mediaR
+            g = mediaG
+            b = mediaB
 
             #print(i, j)
             img_media[i, j] = [r + offset, g + offset, b + offset]
@@ -130,12 +132,11 @@ def histograma(sob, img_shape):
 
 img_resultante_media = media(a)
 img_resultante_sobel = sobel(a)
-#correlacao(a)
 
 img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
-img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
+mg_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
-img_resultante_rgb.save("mediaRGB.png")
+img_resultante_rgb.save("media.png")
 img_resultante_rgb2.save("sobel.png")
 
 
