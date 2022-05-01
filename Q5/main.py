@@ -27,8 +27,6 @@ plt.show()
 
 cv.rectangle(img_copy,top_left, bottom_right, 255, -1)
 
-method = cv.TM_CCORR_NORMED
-
 result = cv.matchTemplate(img_copy,template,method)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
 
