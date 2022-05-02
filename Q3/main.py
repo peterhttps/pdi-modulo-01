@@ -36,7 +36,6 @@ def media(img):
                         #soma 0
                         pass
                     else:
-                        #print(k, j)
                         mediaR += img[i+k, j+l, 0]*mascara_media[k+m, l+n]
                         mediaG += img[i+k, j+l, 1]*mascara_media[k+m, l+n]
                         mediaB += img[i+k, j+l, 2]*mascara_media[k+m, l+n]
@@ -47,7 +46,6 @@ def media(img):
             g = mediaG
             b = mediaB
 
-            #print(i, j)
             img_media[i, j] = [r + offset, g + offset, b + offset]
         j = pivo[1]
 
@@ -136,12 +134,8 @@ def histograma(sob, img_shape, offset):
     menorR = np.amin(sobR)
     menorG = np.amin(sobG)
     menorB = np.amin(sobB)
-    #maior = np.amax(sob)
-    #menor = np.amin(sob)
 
     resultado = np.zeros([h, w, c], dtype='uint8') 
-
-    #print(maiorR, maiorG, maiorB, menorR, menorG, menorB)
 
     for i in range(i, h-1, 1):
         for j in range(j, w-1, 1):
@@ -150,17 +144,13 @@ def histograma(sob, img_shape, offset):
             trB = np.round_(np.multiply(np.divide(sob[i, j, 2] - menorB, maiorB - menorB), 254))
             resultado[i, j] = [trR + offset, trG + offset, trB + offset]
         j = 0
-    #print(resultado)
 
     return resultado
 
-#img_resultante_media = media(a)
 img_resultante_sobel = sobel(a)
 
-#img_resultante_rgb = Image.fromarray(img_resultante_media.astype(np.uint8))
 img_resultante_rgb2 = Image.fromarray(img_resultante_sobel.astype(np.uint8))
 
-#img_resultante_rgb.save("media.png")
 img_resultante_rgb2.save("sobel.png")
 
 

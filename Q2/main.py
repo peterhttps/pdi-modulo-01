@@ -27,16 +27,12 @@ a = np.array(rgb_im)
 
 img_yiq = transformRGB2YIQ(a)
 
-#print(img_yiq.shape)
 
 for w in range(img_yiq.shape[0]):
     for h in range(img_yiq.shape[1]):
         y, i, q = img_yiq[w,h]
-      
         img_yiq[w,h] = [255-y, i, q]
         
-        # output_im.putpixel((w, h), (output_r, output_g, output_b, alpha))
-
 imageRGB = Image.fromarray(transformYIQ2RGB(img_yiq).astype(np.uint8))
 
 imageRGB.save("yiq_negative.png")

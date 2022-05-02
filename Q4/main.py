@@ -38,7 +38,6 @@ def mediana(img):
             I = img[i, j, 1]
             q = img[i, j, 2]
 
-            #print(i, j)
             img_medianaY[i, j] = [y, I, q]
         j = 0
     return img_medianaY
