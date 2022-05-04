@@ -13,8 +13,8 @@ def media(img):
     pivo = [0, 0]
     row = 5
     col = 3
-    m = col//2
-    n = row//2
+    m = row//2
+    n = col//2
     i = pivo[0]
     j = pivo[1]
     k = -m
@@ -30,8 +30,8 @@ def media(img):
             mediaG = 0
             mediaB = 0
 
-            for k in range(k, m+1, 1):
-                for l in range(l, n+1, 1):
+            for k in range(k, m, 1):
+                for l in range(l, n, 1):
                     if (k+i < 0 or k+i > h-1) or (l+j < 0 or l+j > w-1):
                         #soma 0
                         pass
